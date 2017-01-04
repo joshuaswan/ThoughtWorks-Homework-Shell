@@ -1,0 +1,21 @@
+#!/usr/bin/expect
+
+set ip [lindex $argv 0]
+set pwd [lindex $argv 1]
+set src [lindex $argv 2]
+set dest [lindex $argv 3]
+
+
+spawn scp -r $src root@$ip:$dest
+expect {
+    "(yes/no)?" { 
+        send "yes\n"
+        exp_continue
+    }
+    "*password:" {
+        send "$pwd\n"
+    }
+}
+expect eof
+catch wait result
+exit [lindex $result 3]

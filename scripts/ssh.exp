@@ -1,0 +1,20 @@
+#!/usr/bin/expect
+
+set ip [lindex $argv 0]
+set pwd [lindex $argv 1]
+
+spawn ssh root@$ip exit
+expect {
+    "(yes/no)?" { 
+        send "yes\n"
+        exp_continue
+    }
+    "*password:" {
+        send "$pwd\n"
+	    expect { 
+                "*password:" {send_user "user password($pwd) wrong";exit 1}
+         }
+    }
+}
+catch wait result
+exit [lindex $result 3]
